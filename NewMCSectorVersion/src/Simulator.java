@@ -85,6 +85,22 @@ public class Simulator {
 		{
 			ClusterSet.get(i).CalRequiredEnergy();
 		}
+		
+		
+		for(int i=0;i<ClusterSet.size();i++)
+		{
+			if(ClusterSet.get(i).myNodes.size()>20)
+			{
+				System.out.println("Cluster의 중심좌표는 = " + ClusterSet.get(i).centerX + " , " + ClusterSet.get(i).centerY + " 반지름은 = " + ClusterSet.get(i).Radius);
+				
+				for(int j=0;j<ClusterSet.get(i).myNodes.size();j++)
+				{
+					System.out.println(j + "번째 노드의 거리는 = " + 
+							Math.sqrt(Math.pow(ClusterSet.get(i).centerX - ClusterSet.get(i).myNodes.get(j).x, 2) + Math.pow(ClusterSet.get(i).centerY - ClusterSet.get(i).myNodes.get(j).y, 2)));
+				}
+			}
+			
+		}
 		//System.out.println("Test = " + Math.atan(-1) + " " + (Math.atan(-1)+2*Math.PI) + " " + (1.5*Math.PI + Math.atan(1)));
 		
 		/*

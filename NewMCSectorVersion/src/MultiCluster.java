@@ -30,11 +30,12 @@ public class MultiCluster extends Cluster {
 		CompareNodeAngle comp = new CompareNodeAngle();
 		Collections.sort(myNodes,comp);
 		
+		/*
 		for(int i=0;i<myNodes.size();i++)
 		{
 			System.out.println(i + "번째 노드의 start = " + myNodes.get(i).effStart
 					+ " end = " + myNodes.get(i).effEnd);
-		}
+		}*/
 		
 		
 		
