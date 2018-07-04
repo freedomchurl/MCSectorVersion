@@ -7,4 +7,10 @@ public class NewMultiCluster extends Cluster{
 		return 0;
 	}
 
+	@Override
+	public void MakeAngleBased(Node[] input) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

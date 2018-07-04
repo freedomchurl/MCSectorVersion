@@ -38,6 +38,12 @@ public class SingleCluster extends Cluster{
 			// 총 소모 에너지
 		}
 	}
+
+	@Override
+	public void MakeAngleBased(Node[] input) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 

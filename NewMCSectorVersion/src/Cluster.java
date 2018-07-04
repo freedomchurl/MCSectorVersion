@@ -16,6 +16,8 @@ public abstract class Cluster {
 	public double Gt = 1;
 	// Transfer Antenna Gain
 	
+	public static double EffectiveArea = Node.Gr * Cluster.lambda * Cluster.lambda / (4 * Math.PI);
+	// 유효면적을 계산했다.
 	
 	public double centerX;
 	public double centerY;
@@ -34,13 +36,15 @@ public abstract class Cluster {
 		this.centerX = input.centerX;
 		this.centerY = input.centerY;
 		this.Radius = input.Radius;
-		this.myNodes = input.myNodes;
+		this.myNodes.addAll(input.myNodes);
 		// 그대로 데이터를 Circle에서 Cluster로 옮겨온다. 선택된 아이들이니까.
+		// Deep Copy;
 		
 		isOn = new boolean[SectorN];
 		// Sector의 개수만큼 isOn을 설정한다.
 		Gt = SectorN / checkSector; 
 		// 기존적으로 SectorN의 개수가 4이고, checkSector의 값이 4 -> Omni한 상황이라면 4/4 = 1이 될것이고 2개만 켜져있으면 2의 값이 생성될 것이다
+		
 	}
 	
 	Cluster()
@@ -66,6 +70,9 @@ public abstract class Cluster {
 		return myNodes.size();
 		// Circle에 담겨있는 노드의 개수를 리턴한다.
 	}
+	
+	
+	public abstract void MakeAngleBased(Node [] input);
 	
 	public abstract double CalRequiredEnergy();
 	// 이 메소드 내에서 MC의 Static Pt랑 Gt등을 이용하여, MC가 이 Cluster를 충전하는데에 쓰이는 에너지를 계산해야한다.

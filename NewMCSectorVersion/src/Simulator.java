@@ -5,7 +5,7 @@ public class Simulator {
 	public static double MoveEnergy = 5;
 	// 일단은 5J로 설정
 
-	public static int NodeNum = 100;
+	public static int NodeNum = 50;
 	Node[] myNodes = new Node[NodeNum];
 	// 노드 40개를 만들고
 
@@ -20,12 +20,19 @@ public class Simulator {
 	public ArrayList<Circle> CandidateCircle = new ArrayList<Circle>();
 	// 하지만, Multi방식의 경우 둘다, 일단 CandidateCircle을 만들고, 그중에서 골라야한다
 	public ArrayList<Cluster> multiCluster = new ArrayList<Cluster>();
-
+	
+	public ArrayList<Cluster> singleClusterforMulti = new ArrayList<Cluster>();
+	public ArrayList<Cluster> twoClusterforMulti = new ArrayList<Cluster>();
+	public ArrayList<Cluster> tripleClusterforMulti = new ArrayList<Cluster>();
+	
+	
 	public ArrayList<Circle> CandidateCircle_2 = new ArrayList<Circle>();
 	// 위에꺼를 만들고 복사하는 식으로 취한다. Circle은 위에걸 그대로 복사하고 후처리만 하면된다.
 	public ArrayList<Cluster> newmultiCluster = new ArrayList<Cluster>();
 	// 아래는 new 방식
-
+	public ArrayList<Cluster> ClusterSet = new ArrayList<Cluster>();
+	
+	// 아래는 결과를 저장하기 위한 것
 	public TSP myTSP = null;
 
 	public double singleMoveDistance = 0;
@@ -54,10 +61,75 @@ public class Simulator {
 	public void RunMulti() {
 		Welz();
 		System.out.println("Candidate Cluster 개수 = " + this.multiCluster.size());
+		System.out.println("Candidate Cluster 개수 = " + this.twoClusterforMulti.size());
+		System.out.println("Candidate Cluster 개수 = " + this.tripleClusterforMulti.size());
 		// 여기까지는 Candidate 후보를 만드는것
 		// 어제 고려해본 결과, 90도보다 작은 Sector에 대해서는 원으로 그리는게 더 낫다.
+		
+		// 결국, multiCluster에는 지금 Solution Set만 있고, two/triple ClusterforMulti에 다른 single이외의 셋들이 들어있다.
+		// 여기까지는 원형클러스터다.
+		
+		// Angle Based로 바꿔야한다.
+		// SingleCluster에는 해줄 필요 없고
+		// two/triple에만 해주면된다.
+		
+		MakeNewSector();
+		
+		
+		ClusterSet.clear();
+		
+		ClusterSet.addAll(twoClusterforMulti);
+		ClusterSet.addAll(tripleClusterforMulti);
+		
+		for(int i=0;i<ClusterSet.size();i++)
+		{
+			ClusterSet.get(i).CalRequiredEnergy();
+		}
+		//System.out.println("Test = " + Math.atan(-1) + " " + (Math.atan(-1)+2*Math.PI) + " " + (1.5*Math.PI + Math.atan(1)));
+		
+		/*
+		System.out.println("ClusterSet 사이즈 = " + ClusterSet.size());
+		
+		twoClusterforMulti.clear();
+		
+		System.out.println("ClusterSet 사이즈 = " + ClusterSet.size() + " two 사이즈 = " + twoClusterforMulti.size());
+		*/
+		// 후보 Set을 옮겼다. 
+		// 이제 BCE 알고리즘을 돌릴건데, 그 전에 한번 다 계산을 해놔야한다.
+		
+	}
+	
+	public void UpdateAllEffi()
+	{
+		for(int i=0;i<ClusterSet.size();i++)
+		{
+			ClusterSet.get(i).CalRequiredEnergy();
+		}
+		
+		for(int i=0;i<this.multiCluster.size();i++)
+		{
+			multiCluster.get(i).CalRequiredEnergy();
+		}
 	}
 
+	public void MakeNewSector()
+	{
+		for(int i=0;i<NodeNum;i++)
+		{
+			this.myNodes2[i] = new Node(this.myNodes[i]);
+		}
+		for(int i=0;i<twoClusterforMulti.size();i++)
+		{
+			twoClusterforMulti.get(i).MakeAngleBased(myNodes2);
+		}
+		
+		for(int i=0;i<tripleClusterforMulti.size();i++)
+		{
+			tripleClusterforMulti.get(i).MakeAngleBased(myNodes2);
+		}	
+	}
+	
+	
 	public void Welz() {
 		// 일단 순서대로 Single Circle을 추가하고,
 		// 2개짜리 Circle을 추가
@@ -72,10 +144,11 @@ public class Simulator {
 			// Single Circle을 만들고
 			// CandidateCircle에 추가하고
 			SingleCluster tmpCluster = new SingleCluster(tmp);
-			this.multiCluster.add(tmpCluster);
+			this.singleClusterforMulti.add(tmpCluster);
 			// Cluster에 다 담는다.
 			// 다형성으로 인해 이렇게 담아도 상관없다.
 		}
+		this.multiCluster.addAll(singleClusterforMulti);
 		// 이 과정 이후에, Single Cluster인 노드들이 들어가게 된다.
 
 		for (int i = 0; i < NodeNum; i++) {
@@ -88,7 +161,7 @@ public class Simulator {
 					// CandidateCircle에 추가
 
 					MultiCluster tmpCluster = new MultiCluster(tmp);
-					this.multiCluster.add(tmpCluster);
+					this.twoClusterforMulti.add(tmpCluster);
 				}
 			}
 		}
@@ -106,7 +179,7 @@ public class Simulator {
 							// CandidateCircle에 추가
 
 							MultiCluster tmpCluster = new MultiCluster(tmp);
-							this.multiCluster.add(tmpCluster);
+							this.tripleClusterforMulti.add(tmpCluster);
 						}
 					}
 				}
